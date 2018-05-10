@@ -16,7 +16,7 @@ public class Game implements Runnable{
     private Group bar2=null;
     private static double count = 0;
 
-    private BasePlayer player1 = null;
+    private Player1 player1 = null;
     private BasePlayer player2 = null;
 
     private boolean gameOver = false;
@@ -25,8 +25,15 @@ public class Game implements Runnable{
     }
 
     public void run(){
-        moves();
+        if(player1.punching>0){
+            System.out.println(player1.punching);
+            player1.punching--;
+            if(player1.punching==0){
+                player1.changeDisplay(0);
+            }
+        }
         physics();
+        moves();
         collisions();
     }
 
@@ -34,19 +41,24 @@ public class Game implements Runnable{
         Scene scene = new Scene(createUI());
         scene.setOnKeyPressed(keyEvent->{
             if(keyEvent.getCode() == KeyCode.W){
-                player1.setyVel(-100);
+                if(!player1.jumping){
+                    player1.setyVel(-10);
+                    player1.jumping=true;
+                }
             }
             else if(keyEvent.getCode() == KeyCode.A){
                 player1.setxVel(-10);
             }
             else if(keyEvent.getCode() == KeyCode.S){
-                player1.setyVel(100);
+
+                    player1.smash();
+
             }
             else if(keyEvent.getCode() == KeyCode.D){
                 player1.setxVel(10);
             }
             else if(keyEvent.getCode() == KeyCode.Z){
-
+                player1.punch();
             }
             else if(keyEvent.getCode() == KeyCode.X){
 
@@ -107,7 +119,7 @@ public class Game implements Runnable{
         top.setCenter(text);
         ui.setTop(top);
 
-        player1 = new BasePlayer(0);
+        player1 = new Player1();
         player1.orientation=true;
         player1.setPos(50,400);
         player2 = new BasePlayer(1);
@@ -138,26 +150,33 @@ public class Game implements Runnable{
     }
 
     public void moves(){
-        count++;
+        player1.move(0,0);
+        player2.move(0,0);
         //System.out.println("Seconds "+count/100);
     }
 
     public void physics(){
-        player1.move(0,1);
-        player2.move(0,1);
+        player1.accelY(0.2);
+        player2.accelY(0.2);
     }
 
 
     //fix this
     public void collisions(){
-        if(player1.xCollide(0,false))
+        if(player1.xCollide(0,false)){
             player1.correctPosition(2);
-        else if(player1.xCollide(1024-100,true))
+        }
+        else if(player1.xCollide(1024-100,true)){
             player1.correctPosition(3);
-        if(player1.yCollide(0,false))
+        }
+        if(player1.yCollide(0,false)){
             player1.correctPosition(0);
-        else if(player1.yCollide(700-200,true))
+        }
+        else if(player1.yCollide(700-200,true)){
+            player1.jumping=false;
+            player1.smashing=false;
             player1.correctPosition(1);
+        }
 
         if(player2.xCollide(0,false))
             player2.correctPosition(2);

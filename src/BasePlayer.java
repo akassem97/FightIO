@@ -12,6 +12,7 @@ public class BasePlayer {
     private int height = 200;
     private int width = 100;
     private int player;
+    public boolean jumping = false;
     public boolean orientation = false; //false = left facing       true = right facing
     private ImageView display = new ImageView();
     private WritableImage[] images;
@@ -133,11 +134,16 @@ public class BasePlayer {
     }
 
     public void changeDisplay(int i){
-        display.setImage(null);
+        display.setImage(images[i]);
+    }
+
+    public void swapOrientation(){
         if(orientation){
-
+            display.setScaleX(-1);
+            orientation=false;
         }else{
-
+            display.setScaleX(-1);
+            orientation=true;
         }
     }
 
