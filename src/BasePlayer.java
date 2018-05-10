@@ -20,7 +20,7 @@ public class BasePlayer {
     public BasePlayer(int pPlayer){
         player=pPlayer;
         images = loadImages();
-        display.setImage(images[player*2]);
+        display.setImage(images[player*4]);
     }
 
     public ImageView getView(){
@@ -154,7 +154,7 @@ public class BasePlayer {
         int tileSetRows = 1;
 
 
-        Image img = new Image(Main.class.getResourceAsStream("shitset.png"));
+        Image img = new Image(Main.class.getResourceAsStream("imageSet.png"));
         PixelReader reader = img.getPixelReader();
         int y,x;
         WritableImage[] imageSet = new WritableImage[tileSetColumns*tileSetRows];
