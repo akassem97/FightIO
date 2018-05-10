@@ -120,10 +120,9 @@ public class Game implements Runnable{
         ui.setTop(top);
 
         player1 = new Player1();
-        player1.orientation=true;
         player1.setPos(50,400);
         player2 = new BasePlayer(1);
-        player2.orientation=false;
+        player2.swapOrientation();
         player2.setPos(850,400);
 
         AnchorPane gameDisplayWrapper = new AnchorPane();
