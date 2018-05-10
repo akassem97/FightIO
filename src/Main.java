@@ -15,9 +15,9 @@ public class Main extends Application {
         primaryStage.setTitle("Fight!");
         primaryStage.show();
         game = new Game();
-        Scene gameScene = new Scene(game.createUI());
+        Scene gameScene = game.createGameScene();
         primaryStage.setScene(gameScene);
-        executorService.scheduleAtFixedRate(game, 0, 100, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(game, 0, 1000/144, TimeUnit.MILLISECONDS);
     }
 
     public static void main(String[] args) {

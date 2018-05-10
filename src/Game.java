@@ -1,4 +1,8 @@
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -10,7 +14,7 @@ public class Game implements Runnable{
     private int hp2=100;
     private Group bar1=null;
     private Group bar2=null;
-    private static int count = 0;
+    private static double count = 0;
 
     private BasePlayer player1 = null;
     private BasePlayer player2 = null;
@@ -18,7 +22,6 @@ public class Game implements Runnable{
     private boolean gameOver = false;
 
     public Game(){
-
     }
 
     public void run(){
@@ -27,6 +30,56 @@ public class Game implements Runnable{
         collisions();
     }
 
+    public Scene createGameScene(){
+        Scene scene = new Scene(createUI());
+        scene.setOnKeyPressed(keyEvent->{
+            if(keyEvent.getCode() == KeyCode.W){
+                player1.setyVel(-100);
+            }
+            else if(keyEvent.getCode() == KeyCode.A){
+                player1.setxVel(-10);
+            }
+            else if(keyEvent.getCode() == KeyCode.S){
+                player1.setyVel(100);
+            }
+            else if(keyEvent.getCode() == KeyCode.D){
+                player1.setxVel(10);
+            }
+            else if(keyEvent.getCode() == KeyCode.Z){
+
+            }
+            else if(keyEvent.getCode() == KeyCode.X){
+
+            }
+            else if(keyEvent.getCode() == KeyCode.C){
+
+            }
+        });
+        scene.setOnKeyReleased(keyEvent->{
+            if(keyEvent.getCode() == KeyCode.W){
+                //player1.setyVel(0);
+            }
+            else if(keyEvent.getCode() == KeyCode.A){
+                player1.setxVel(0);
+            }
+            else if(keyEvent.getCode() == KeyCode.S){
+                //player1.setyVel(0);
+            }
+            else if(keyEvent.getCode() == KeyCode.D){
+                player1.setxVel(0);
+            }
+            else if(keyEvent.getCode() == KeyCode.Z){
+
+            }
+            else if(keyEvent.getCode() == KeyCode.X){
+
+            }
+            else if(keyEvent.getCode() == KeyCode.C){
+
+            }
+        });
+        return scene;
+    }
 
     public void reduceHP(int player, int amount){
         if(player==1){
@@ -44,6 +97,7 @@ public class Game implements Runnable{
         BorderPane ui = new BorderPane();
         ui.setPrefSize(1024,768);
         ui.setMaxSize(1024,768);
+
         BorderPane top = new BorderPane();
         bar1 = healthBar();
         top.setLeft(bar1);
@@ -53,10 +107,10 @@ public class Game implements Runnable{
         top.setCenter(text);
         ui.setTop(top);
 
-        player1 = new BasePlayer(80,200,0);
+        player1 = new BasePlayer(0);
         player1.orientation=true;
         player1.setPos(50,400);
-        player2 = new BasePlayer(80,200,1);
+        player2 = new BasePlayer(1);
         player2.orientation=false;
         player2.setPos(850,400);
 
@@ -85,27 +139,34 @@ public class Game implements Runnable{
 
     public void moves(){
         count++;
-        System.out.println("afsdf "+count);
+        //System.out.println("Seconds "+count/100);
     }
 
     public void physics(){
-        player1.move(0,-1);
-        player2.move(0,-1);
-        System.out.println("Phyicsas");
+        player1.move(0,1);
+        player2.move(0,1);
     }
 
+
+    //fix this
     public void collisions(){
-        if(player1.x<0)player1.x=0;
-        else if(player1.x>=1024-100)player1.x=1024-100;
-        if(player1.y<0)player1.y=0;
-        else if(player1.y>=700-200)player1.y=700-200;
+        if(player1.xCollide(0,false))
+            player1.correctPosition(2);
+        else if(player1.xCollide(1024-100,true))
+            player1.correctPosition(3);
+        if(player1.yCollide(0,false))
+            player1.correctPosition(0);
+        else if(player1.yCollide(700-200,true))
+            player1.correctPosition(1);
 
-        if(player2.x<0)player2.x=0;
-        else if(player2.x>=1024-100)player2.x=1024-100;
-        if(player2.y<0)player2.y=0;
-        else if(player2.y>=700-200)player2.y=700-200;
+        if(player2.xCollide(0,false))
+            player2.correctPosition(2);
+        else if(player2.xCollide(1024-100,true))
+            player2.correctPosition(3);
+        if(player2.yCollide(0,false))
+            player2.correctPosition(0);
+        else if(player2.yCollide(700-200,true))
+            player2.correctPosition(1);
 
-        int xDiff=Math.abs(player2.x-player1.x);
-        if(xDiff<100)player1.x-=xDiff;
     }
 }

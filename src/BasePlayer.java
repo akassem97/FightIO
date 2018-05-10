@@ -5,18 +5,18 @@ import javafx.scene.image.WritableImage;
 
 
 public class BasePlayer {
-    int x = 0;
-    int y = 0;
-    int height = 0;
-    int width = 0;
-    int player;
-    boolean orientation = false; //false = left facing       true = right facing
-    ImageView display = new ImageView();
-    WritableImage[] images;
+    private double x = 0;
+    private double y = 0;
+    private double xVel=0;
+    private double yVel=0;
+    private int height = 200;
+    private int width = 100;
+    private int player;
+    public boolean orientation = false; //false = left facing       true = right facing
+    private ImageView display = new ImageView();
+    private WritableImage[] images;
 
-    public BasePlayer(int h,int w,int pPlayer){
-        height=h;
-        width=w;
+    public BasePlayer(int pPlayer){
         player=pPlayer;
         images = loadImages();
         display.setImage(images[player*2]);
@@ -26,17 +26,110 @@ public class BasePlayer {
         return display;
     }
 
-    public void move(int pX, int pY){
-        x-=pX*20;
-        y-=pY*20;
-        setPos(x,y);
+    public double getX(){
+        return x;
     }
 
-    public void setPos(int pX, int pY){
+    public double getY(){
+        return y;
+    }
+
+    public void accelX(double pVel){
+        xVel+=pVel;
+    }
+
+    public void accelY(double pVel){
+        yVel+=pVel;
+    }
+
+    public void accel(double pxVel, double pyVel){
+        xVel+=pxVel;
+        yVel+=pyVel;
+    }
+
+    public void setxVel(double pVel){
+        xVel=pVel;
+    }
+
+    public void setyVel(double pVel){
+        yVel=pVel;
+    }
+
+    public void correctPosition(int direction){//    up, down,   left, right
+        switch(direction){
+            case 0:
+                y=0;
+                setyVel(0);
+                display.setTranslateY(y);
+                break;
+            case 1:
+                y=700-height;
+                setyVel(0);
+                display.setTranslateY(y);
+                break;
+            case 2:
+                x=0;
+                setxVel(0);
+                display.setTranslateX(x);
+                break;
+            case 3:
+                x=1024-width;
+                setxVel(0);
+                display.setTranslateX(x);
+                break;
+        }
+    }
+
+    public void move(double pX, double pY){
+        accelX(pX*5);
+        accelY(pY*5);
+        x+=xVel;
+        y+=yVel;
+        display.setTranslateX(x);
+        display.setTranslateY(y);
+    }
+
+    public void setPos(double pX, double pY){
         x=pX;
         y=pY;
         display.setTranslateX(x);
         display.setTranslateY(y);
+    }
+
+    public boolean xCollide(double targetX, boolean targetsLeftFace){
+        double previousX = x-xVel;
+        double newX = x;
+
+        if(previousX==targetX && newX > targetX && !targetsLeftFace){
+            return false;
+        }else if(previousX==targetX && newX < targetX && targetsLeftFace){
+            return false;
+        }else if(previousX<=targetX && newX>=targetX){
+            System.out.println(previousX + " " + newX + " " + targetX);
+            return true;
+        }else if(previousX>=targetX && newX<=targetX){
+            System.out.println(previousX + " " + newX + " " + targetX);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean yCollide(double targetY, boolean targetsTopFace){
+        double previousY = y-yVel;
+        double newY = y;
+
+        if(previousY==targetY && newY > targetY && !targetsTopFace){
+            return false;
+        }else if(previousY==targetY && newY < targetY && targetsTopFace){
+            return false;
+        }else if(previousY<=targetY && newY>=targetY){
+            return true;
+        }else if(previousY>=targetY && newY<=targetY){
+            return true;
+        }
+
+        return false;
     }
 
     public void changeDisplay(int i){
@@ -49,14 +142,20 @@ public class BasePlayer {
     }
 
     protected WritableImage[] loadImages(){
+        int tileSetWidth = 100;
+        int tileSetHeight = 200;
+        int tileSetColumns = 8;
+        int tileSetRows = 1;
+
+
         Image img = new Image(Main.class.getResourceAsStream("shitset.png"));
         PixelReader reader = img.getPixelReader();
         int y,x;
-        WritableImage[] imageSet = new WritableImage[8*1];
-        for(int i = 0; i < 8 * 1; i++){
-            x=(i%8);
-            y=(i/8);
-            imageSet[i] = new WritableImage(reader, x*100, y*200, 100, 200);
+        WritableImage[] imageSet = new WritableImage[tileSetColumns*tileSetRows];
+        for(int i = 0; i < tileSetColumns * tileSetRows; i++){
+            x=(i%tileSetColumns);
+            y=(i/tileSetColumns);
+            imageSet[i] = new WritableImage(reader, x*tileSetWidth, y*tileSetHeight, tileSetWidth, tileSetHeight);
         }
         return imageSet;
     }
