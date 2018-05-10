@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.util.concurrent.Executors;
@@ -16,8 +17,15 @@ public class Main extends Application {
         primaryStage.show();
         game = new Game();
         Scene gameScene = game.createGameScene();
+        gameScene.setOnKeyPressed(event->{
+            if(event.getCode()== KeyCode.ESCAPE){
+                executorService.shutdown();
+                primaryStage.close();
+            }
+        });
         primaryStage.setScene(gameScene);
         executorService.scheduleAtFixedRate(game, 0, 1000/120, TimeUnit.MILLISECONDS);
+
     }
 
     public static void main(String[] args) {
