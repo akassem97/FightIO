@@ -17,7 +17,7 @@ public class Main extends Application {
         game = new Game();
         Scene gameScene = game.createGameScene();
         primaryStage.setScene(gameScene);
-        executorService.scheduleAtFixedRate(game, 0, 1000/144, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(game, 0, 1000/120, TimeUnit.MILLISECONDS);
     }
 
     public static void main(String[] args) {

@@ -15,7 +15,7 @@ public class Game implements Runnable{
     private Group bar1=null;
     private Group bar2=null;
     private static double count = 0;
-
+    private Text text;
     private Player1 player1 = null;
     private BasePlayer player2 = null;
 
@@ -35,6 +35,8 @@ public class Game implements Runnable{
         physics();
         moves();
         collisions();
+        count++;
+        //text.setText(count/120+"s");
     }
 
     public Scene createGameScene(){
@@ -115,7 +117,7 @@ public class Game implements Runnable{
         top.setLeft(bar1);
         bar2 = healthBar();
         top.setRight(bar2);
-        Text text = new Text("KEK");
+        text = new Text("KEK");
         top.setCenter(text);
         ui.setTop(top);
 
@@ -151,7 +153,6 @@ public class Game implements Runnable{
     public void moves(){
         player1.move(0,0);
         player2.move(0,0);
-        //System.out.println("Seconds "+count/100);
     }
 
     public void physics(){
@@ -186,5 +187,12 @@ public class Game implements Runnable{
         else if(player2.yCollide(700-200,true))
             player2.correctPosition(1);
 
+        if(player1.xCollide(player2.getX()-100,true)){
+            player1.correctPosition(2,player2.getX()-100);
+        }
+        /*
+        if(&&player1.yCollide(player2.getY()-200,true)){
+            player1.correctPosition(0,player2.getY()-200);
+        }*/
     }
 }
