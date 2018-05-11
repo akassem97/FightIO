@@ -11,7 +11,7 @@ public class BasePlayer extends PhysicsObject{
     public BasePlayer(int pPlayer){
         super();
         player=pPlayer;
-        changeDisplay(4*pPlayer);
+        changeDisplay(10*pPlayer);
     }
 
 }

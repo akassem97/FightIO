@@ -42,28 +42,29 @@ public class Game implements Runnable{
     public Scene createGameScene(){
         Scene scene = new Scene(createUI());
         scene.setOnKeyPressed(keyEvent->{
-            if(keyEvent.getCode() == KeyCode.W){
+            if(keyEvent.getCode() == KeyCode.UP){
                 if(!player1.jumping){
                     player1.setyVel(-10);
                     player1.jumping=true;
                 }
             }
-            else if(keyEvent.getCode() == KeyCode.A){
+            else if(keyEvent.getCode() == KeyCode.LEFT){
                 player1.setxVel(-10);
             }
-            else if(keyEvent.getCode() == KeyCode.S){
+            else if(keyEvent.getCode() == KeyCode.DOWN){
 
                     player1.smash();
 
             }
-            else if(keyEvent.getCode() == KeyCode.D){
+            else if(keyEvent.getCode() == KeyCode.RIGHT){
                 player1.setxVel(10);
             }
-            else if(keyEvent.getCode() == KeyCode.Z){
+            else if(keyEvent.getCode() == KeyCode.Z ){
                 player1.punch();
             }
             else if(keyEvent.getCode() == KeyCode.X){
-
+            	player1.kick();
+            	
             }
             else if(keyEvent.getCode() == KeyCode.C){
 

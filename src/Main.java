@@ -18,6 +18,9 @@ public class Main extends Application {
         Scene gameScene = game.createGameScene();
         primaryStage.setScene(gameScene);
         executorService.scheduleAtFixedRate(game, 0, 1000/120, TimeUnit.MILLISECONDS);
+        primaryStage.setOnCloseRequest(e->{
+            executorService.shutdown();
+        });
     }
 
     public static void main(String[] args) {

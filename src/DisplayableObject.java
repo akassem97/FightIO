@@ -37,8 +37,8 @@ public class DisplayableObject {
     protected WritableImage[] loadImages(){
         int tileSetWidth = 100;
         int tileSetHeight = 200;
-        int tileSetColumns = 8;
-        int tileSetRows = 1;
+        int tileSetColumns = 10;
+        int tileSetRows = 2;
 
 
         Image img = new Image(Main.class.getResourceAsStream("imageSet.png"));
