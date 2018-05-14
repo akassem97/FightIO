@@ -99,7 +99,6 @@ public class MeshEditor extends Application{
                 final int componentId = numberOfComponents;
                 numberOfComponents++;
                 numberOfPoints=0;
-                createNewMeshComponent();
                 Polygon poly = new Polygon();
                 poly.setFill(Color.ORANGE);
                 poly.setTranslateX(event.getX());
@@ -111,29 +110,15 @@ public class MeshEditor extends Application{
                     System.out.println(componentId);
                 });
                 currentComponent=poly;
-                currentComponent.getPoints().add(event.getX()-currentComponent.getTranslateX());
-                currentComponent.getPoints().add(event.getY()-currentComponent.getTranslateY());
-                components.get(selectedComponent).points.add(event.getX()-currentComponent.getTranslateX());
-                components.get(selectedComponent).points.add(event.getY()-currentComponent.getTranslateY());
-                polygons.getChildren().add(poly);
-                addMeshComponentPoint(selectedComponent,event.getX(),event.getY());
+                createNewMeshComponent(event.getX(),event.getY());
             }else if(creatingPoint){
                 addMeshComponentPoint(selectedComponent,event.getX(),event.getY());
-                currentComponent.getPoints().add(event.getX()-currentComponent.getTranslateX());
-                currentComponent.getPoints().add(event.getY()-currentComponent.getTranslateY());
+
             }
         });
         view.setOnMouseDragged(event->{
             if(movingPoint) {
-                currentPoint.setTranslateX(event.getX());
-                currentPoint.setTranslateY(event.getY());
-                System.out.println(selectedPointId + " / "+numberOfPoints);
-                currentComponent.getPoints().set(selectedPointId,event.getX()-currentComponent.getTranslateX());
-                currentComponent.getPoints().set(selectedPointId+1,event.getY()-currentComponent.getTranslateY());
-                components.get(selectedComponent).points.set(selectedPointId,event.getX()-currentComponent.getTranslateX());
-                components.get(selectedComponent).points.set(selectedPointId+1,event.getY()-currentComponent.getTranslateY());
-
-                currentComponent.setFill(Color.ORANGE);
+                updateMeshComponentPoint(event.getX(),event.getY());
             }
         });
         view.getChildren().add(background);
@@ -145,9 +130,11 @@ public class MeshEditor extends Application{
         return ui;
     }
 
-    public void createNewMeshComponent(){
+    public void createNewMeshComponent(double x, double y){
         components.add(new CollisionMesh());
         selectedComponent = numberOfComponents-1;
+        addMeshComponentPoint(selectedComponent,x,y);
+        polygons.getChildren().add(currentComponent);
     }
 
     public void addMeshComponentPoint(int component,double x, double y){
@@ -169,12 +156,22 @@ public class MeshEditor extends Application{
             }
         });
         display.getChildren().add(selectPoint);
+        currentComponent.getPoints().add(x-currentComponent.getTranslateX());
+        currentComponent.getPoints().add(y-currentComponent.getTranslateY());
         components.get(component).points.add(x);
         components.get(component).points.add(y);
         components.get(component).numberOfPoints++;
     }
 
-
+    public void updateMeshComponentPoint(double x, double y){
+        currentPoint.setTranslateX(x);
+        currentPoint.setTranslateY(y);
+        currentComponent.getPoints().set(selectedPointId,x-currentComponent.getTranslateX());
+        currentComponent.getPoints().set(selectedPointId+1,y-currentComponent.getTranslateY());
+        components.get(selectedComponent).points.set(selectedPointId,x-currentComponent.getTranslateX());
+        components.get(selectedComponent).points.set(selectedPointId+1,y-currentComponent.getTranslateY());
+        currentComponent.setFill(Color.ORANGE);
+    }
 
 
 
