@@ -1,9 +1,12 @@
 import com.sun.prism.shader.DrawCircle_LinearGradient_PAD_AlphaTest_Loader;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 public class MeshEditor extends Application{
 
     ArrayList<CollisionMesh> components = new ArrayList<>();
+    ListView<String> listView = new ListView<>();
     Group display = new Group();
     Group polygons = new Group();
     int selectedComponent = 0;
@@ -31,14 +35,14 @@ public class MeshEditor extends Application{
     int numberOfComponents = 0;
     int selectedPointId;
 
-    Text xView = new Text("0.0");
-    Text yView = new Text("0.0");
-    Text rotationView = new Text("0.0");
+    Text xView = new Text("n.a.");
+    Text yView = new Text("n.a");
+    Text rotationView = new Text("n.a.");
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        primaryStage.setTitle("Fight!");
+        primaryStage.setTitle("Fight! Mesh Editor");
         primaryStage.show();
         Scene editorScene = new Scene(createUserInterface());
         primaryStage.setScene(editorScene);
@@ -50,6 +54,8 @@ public class MeshEditor extends Application{
 
 
         GridPane controller = new GridPane();
+        controller.setVgap(20);
+        controller.setHgap(20);
         controller.setMinSize(200,900);
         controller.add(xView,0,0);
         controller.add(yView,0,1);
@@ -76,10 +82,10 @@ public class MeshEditor extends Application{
 
 
         AnchorPane view = new AnchorPane();
-        Rectangle background = new Rectangle(1400,900);
+        Rectangle background = new Rectangle(1200,900);
         background.setFill(Color.WHITE);
         display.getChildren().add(polygons);
-        view.setPrefSize(1400,900);
+        view.setPrefSize(1200,900);
 
         background.setOnMouseMoved(event->{
             if(movingPoint){
@@ -97,7 +103,6 @@ public class MeshEditor extends Application{
         background.setOnMouseClicked(event->{
             if(creatingComponent) {
                 final int componentId = numberOfComponents;
-                numberOfComponents++;
                 numberOfPoints=0;
                 Polygon poly = new Polygon();
                 poly.setFill(Color.ORANGE);
@@ -107,7 +112,6 @@ public class MeshEditor extends Application{
                     selectedComponent = componentId;
                     currentComponent = (Polygon) polygons.getChildren().get(componentId);
                     numberOfPoints=components.get(selectedComponent).numberOfPoints;
-                    System.out.println(componentId);
                 });
                 currentComponent=poly;
                 createNewMeshComponent(event.getX(),event.getY());
@@ -124,15 +128,25 @@ public class MeshEditor extends Application{
         view.getChildren().add(background);
         view.getChildren().add(display);
 
-        ui.setLeft(view);
+        ui.setCenter(view);
+
+
+        listView.setOnMouseClicked(event->{
+            selectedComponent =  listView.getSelectionModel().getSelectedIndex();
+            currentComponent = (Polygon) polygons.getChildren().get(selectedComponent);
+            numberOfPoints=components.get(selectedComponent).numberOfPoints;
+        });
+        ui.setLeft(listView);
 
 
         return ui;
     }
 
     public void createNewMeshComponent(double x, double y){
-        components.add(new CollisionMesh());
-        selectedComponent = numberOfComponents-1;
+        components.add(new CollisionMesh("Component "+numberOfComponents));
+        selectedComponent = numberOfComponents;
+        numberOfComponents++;
+        listView.getItems().add(components.get(selectedComponent).toString());
         addMeshComponentPoint(selectedComponent,x,y);
         polygons.getChildren().add(currentComponent);
     }
@@ -161,6 +175,7 @@ public class MeshEditor extends Application{
         components.get(component).points.add(x);
         components.get(component).points.add(y);
         components.get(component).numberOfPoints++;
+        listView.getItems().set(selectedComponent,components.get(selectedComponent).toString());
     }
 
     public void updateMeshComponentPoint(double x, double y){

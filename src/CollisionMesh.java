@@ -11,12 +11,15 @@ public class CollisionMesh {
     public double y = 0.0;
     public double rotation = 0.0;
     public int numberOfPoints = 0;
+    public String name;
 
-    public CollisionMesh(){
-        Polygon poly = new Polygon();
-        poly.getPoints();
+    public CollisionMesh(String pName){
+        name=pName;
+
     }
 
-
+    public String toString(){
+        return name +"  X:"+x+"  Y:"+y+"  Points:"+numberOfPoints;
+    }
 
 }
