@@ -1,6 +1,4 @@
-/**
- * Created by Danny on 11/05/2018.
- */
+
 public class PhysicsObject extends DisplayableObject{
     private double x = 0;
     private double y = 0;

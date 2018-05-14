@@ -1,10 +1,8 @@
-/**
- * Created by Danny on 10/05/2018.
- */
-public class Player1 extends BasePlayer{
+
+public class Player extends BasePlayer{
     public boolean smashing=false;
     public int punching = 0;
-    public Player1(){
+    public Player(){
         super(0);
     }
 

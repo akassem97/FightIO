@@ -3,9 +3,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 
-/**
- * Created by Danny on 11/05/2018.
- */
+
 public class DisplayableObject {
     protected ImageView display = new ImageView();
     private WritableImage[] images;

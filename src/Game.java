@@ -1,8 +1,6 @@
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -16,12 +14,13 @@ public class Game implements Runnable{
     private Group bar2=null;
     private static double count = 0;
     private Text text;
-    private Player1 player1 = null;
+    private Player player1 = null;
     private BasePlayer player2 = null;
 
     private boolean gameOver = false;
 
     public Game(){
+        calculateCollision(0,10, 0,10,   0,10, 11,10);
     }
 
     public void run(){
@@ -109,8 +108,8 @@ public class Game implements Runnable{
 
     public BorderPane createUI() {
         BorderPane ui = new BorderPane();
-        ui.setPrefSize(1024,768);
-        ui.setMaxSize(1024,768);
+        ui.setPrefSize(1024,1000);
+        ui.setMaxSize(1024,1000);
 
         BorderPane top = new BorderPane();
         bar1 = healthBar();
@@ -121,7 +120,7 @@ public class Game implements Runnable{
         top.setCenter(text);
         ui.setTop(top);
 
-        player1 = new Player1();
+        player1 = new Player();
         player1.setPos(50,400);
         player2 = new BasePlayer(1);
         player2.swapOrientation();
@@ -136,8 +135,61 @@ public class Game implements Runnable{
         gameDisplayWrapper.getChildren().add(gameDisplay);
         ui.setCenter(gameDisplayWrapper);
 
+
+
+        //ui.setBottom(boundingBox());
+
         return ui;
     }
+
+
+    public Group boundingBox(){
+        Group group = new Group();
+
+        Polygon head = new Polygon(0,0, 20,0, 20,20, 0,20);
+        head.setFill(Color.CHOCOLATE);
+        head.setTranslateX(6);
+        head.setTranslateY(100);
+        group.getChildren().add(head);
+
+        Polygon armL = new Polygon(0,0, 50,0, 50,5, 0,5);
+        armL.setFill(Color.GREEN);
+        armL.setTranslateX(18);
+        armL.setTranslateY(70);
+        armL.setRotate(300);
+        group.getChildren().add(armL);
+
+        Polygon armR = new Polygon(0,0, 50,0, 50,5, 0,5);
+        armR.setFill(Color.GREEN);
+        armR.setTranslateX(-36);
+        armR.setTranslateY(70);
+        armR.setRotate(60);
+        group.getChildren().add(armR);
+
+        Polygon body = new Polygon(0,0, 32,0, 32,50, 0,50);
+        body.setFill(Color.RED);
+        body.setTranslateX(0);
+        body.setTranslateY(50);
+        group.getChildren().add(body);
+
+        Polygon legL = new Polygon(0,0, 5,0, 5,50, 0,50);
+        legL.setFill(Color.BLUE);
+        legL.setTranslateX(27);
+        legL.setTranslateY(0);
+        group.getChildren().add(legL);
+
+        Polygon legR = new Polygon(0,0, 5,0, 5,50, 0,50);
+        legR.setFill(Color.BLUE);
+        legR.setTranslateX(0);
+        legR.setTranslateY(0);
+        group.getChildren().add(legR);
+
+        group.setTranslateX(100);
+        group.setScaleY(-2);
+        group.setScaleX(2);
+        return group;
+    }
+
 
     public Group healthBar(){
         Group bar= new Group();
@@ -160,6 +212,24 @@ public class Game implements Runnable{
         player2.accelY(0.2);
     }
 
+
+    public boolean calculateCollision(double x1, double x2, double y1, double y2,    double x3, double x4, double y3, double y4){
+        double grad1 = (y1-y2)/(x1-x2);
+        double grad2 = (y3-y4)/(x3-x4);
+
+        double c1 = y1-x1*grad1;
+        double c2 = y3-x3*grad2;
+
+        double xi = (c1-c2)/(grad2-grad1);
+        double yi = xi*grad1+c1;
+
+        if((x1>x2&&xi>x2&&x1>xi || x1<x2&&xi<x2&&x1<xi) && (x3>x4&&xi>x4&&x3>xi|| x3<x4&&xi<x4&&x3<xi) && (y1>y2&&yi>y2&&y1>yi || y1<y2&&yi<y2&&y1<yi) && (y3>y4&&yi>y4&&y3>yi|| y3<y4&&yi<y4&&y3<yi)){
+            System.out.println("COLLIS");
+            return true;
+        }
+        System.out.println(grad1 + " " + c1 + " " + grad2 + " " + c2 + " " + xi + " " + yi + " ");
+        return false;
+    }
 
     //fix this
     public void collisions(){
