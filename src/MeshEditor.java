@@ -20,6 +20,7 @@ public class MeshEditor extends Application{
 
     ArrayList<CollisionMesh> components = new ArrayList<>();
     Group display = new Group();
+    Group polygons = new Group();
     int selectedComponent = 0;
     boolean creatingPoint = false;
     boolean creatingComponent = false;
@@ -27,6 +28,7 @@ public class MeshEditor extends Application{
     Circle currentPoint;
     Polygon currentComponent;
     int numberOfPoints = 0;
+    int numberOfComponents = 0;
     int selectedPointId;
 
     Text xView = new Text("0.0");
@@ -40,14 +42,6 @@ public class MeshEditor extends Application{
         primaryStage.show();
         Scene editorScene = new Scene(createUserInterface());
         primaryStage.setScene(editorScene);
-    }
-
-    public class PointWrapper{
-        public PointWrapper(){
-
-        }
-
-
     }
 
     public BorderPane createUserInterface(){
@@ -84,6 +78,7 @@ public class MeshEditor extends Application{
         AnchorPane view = new AnchorPane();
         Rectangle background = new Rectangle(1400,900);
         background.setFill(Color.WHITE);
+        display.getChildren().add(polygons);
         view.setPrefSize(1400,900);
 
         background.setOnMouseMoved(event->{
@@ -101,31 +96,43 @@ public class MeshEditor extends Application{
         });
         background.setOnMouseClicked(event->{
             if(creatingComponent) {
+                final int componentId = numberOfComponents;
+                numberOfComponents++;
+                numberOfPoints=0;
+                createNewMeshComponent();
                 Polygon poly = new Polygon();
                 poly.setFill(Color.ORANGE);
                 poly.setTranslateX(event.getX());
                 poly.setTranslateY(event.getY());
+                poly.setOnMouseClicked(polyEvent->{
+                    selectedComponent = componentId;
+                    currentComponent = (Polygon) polygons.getChildren().get(componentId);
+                    numberOfPoints=components.get(selectedComponent).numberOfPoints;
+                    System.out.println(componentId);
+                });
                 currentComponent=poly;
                 currentComponent.getPoints().add(event.getX()-currentComponent.getTranslateX());
                 currentComponent.getPoints().add(event.getY()-currentComponent.getTranslateY());
-                display.getChildren().add(poly);
-                createNewMeshComponent();
+                components.get(selectedComponent).points.add(event.getX()-currentComponent.getTranslateX());
+                components.get(selectedComponent).points.add(event.getY()-currentComponent.getTranslateY());
+                polygons.getChildren().add(poly);
                 addMeshComponentPoint(selectedComponent,event.getX(),event.getY());
             }else if(creatingPoint){
                 addMeshComponentPoint(selectedComponent,event.getX(),event.getY());
                 currentComponent.getPoints().add(event.getX()-currentComponent.getTranslateX());
                 currentComponent.getPoints().add(event.getY()-currentComponent.getTranslateY());
             }
-
         });
         view.setOnMouseDragged(event->{
             if(movingPoint) {
-                //components.get(selectedComponent).points.add(event.getX()-currentComponent.getTranslateX());
-                //components.get(selectedComponent).points.add(event.getY()-currentComponent.getTranslateY());
                 currentPoint.setTranslateX(event.getX());
                 currentPoint.setTranslateY(event.getY());
+                System.out.println(selectedPointId + " / "+numberOfPoints);
                 currentComponent.getPoints().set(selectedPointId,event.getX()-currentComponent.getTranslateX());
                 currentComponent.getPoints().set(selectedPointId+1,event.getY()-currentComponent.getTranslateY());
+                components.get(selectedComponent).points.set(selectedPointId,event.getX()-currentComponent.getTranslateX());
+                components.get(selectedComponent).points.set(selectedPointId+1,event.getY()-currentComponent.getTranslateY());
+
                 currentComponent.setFill(Color.ORANGE);
             }
         });
@@ -140,27 +147,31 @@ public class MeshEditor extends Application{
 
     public void createNewMeshComponent(){
         components.add(new CollisionMesh());
-        selectedComponent = components.size()-1;
+        selectedComponent = numberOfComponents-1;
     }
 
     public void addMeshComponentPoint(int component,double x, double y){
         Circle selectPoint = new Circle(10);
         final int pointId = numberOfPoints;
+        final int componentId = numberOfComponents-1;
         numberOfPoints+=2;
         selectPoint.setFill(Color.BLACK);
         selectPoint.setTranslateX(x);
         selectPoint.setTranslateY(y);
         selectPoint.setOnMousePressed(event->{
-            selectedPointId=pointId;
-            currentPoint=selectPoint;
-            creatingPoint=false;
-            creatingComponent=false;
-            movingPoint=true;
-            System.out.println("Moving point");
+            if(selectedComponent==componentId){
+                selectedPointId=pointId;
+                currentPoint=selectPoint;
+                creatingPoint=false;
+                creatingComponent=false;
+                movingPoint=true;
+                System.out.println("Moving point");
+            }
         });
         display.getChildren().add(selectPoint);
         components.get(component).points.add(x);
         components.get(component).points.add(y);
+        components.get(component).numberOfPoints++;
     }
 
 
