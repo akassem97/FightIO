@@ -25,15 +25,16 @@ public class MeshEditor extends Application{
     ListView<String> listView = new ListView<>();
     Group display = new Group();
     Group polygons = new Group();
-    int selectedComponent = 0;
-    boolean creatingPoint = false;
-    boolean creatingComponent = false;
-    boolean movingPoint = false;
+    int controlStage=0;
+    // 1 = creating point
+    // 2 = creating component
+    // 3 = moving point
     Circle currentPoint;
     Polygon currentComponent;
     int numberOfPoints = 0;
     int numberOfComponents = 0;
     int selectedPointId;
+    int selectedComponent = 0;
 
     Text xView = new Text("n.a.");
     Text yView = new Text("n.a");
@@ -63,18 +64,14 @@ public class MeshEditor extends Application{
         Button createPoint = new Button();
         createPoint.setText("Add point");
         createPoint.setOnMouseClicked(event->{
-            creatingPoint = true;
-            creatingComponent = false;
-            movingPoint = false;
+            controlStage=1;
             currentPoint = null;
         });
         controller.add(createPoint,0,3);
         Button createComponent = new Button();
         createComponent.setText("Add component");
         createComponent.setOnMouseClicked(event->{
-            creatingPoint = false;
-            creatingComponent = true;
-            movingPoint = false;
+            controlStage=2;
             currentPoint = null;
         });
         controller.add(createComponent,0,4);
@@ -88,20 +85,20 @@ public class MeshEditor extends Application{
         view.setPrefSize(1200,900);
 
         background.setOnMouseMoved(event->{
-            if(movingPoint){
+            if(controlStage==3){
                 if(currentPoint.getCenterX()+50>event.getX()||currentPoint.getCenterX()-50<event.getX()){
-                    movingPoint=false;
+                    controlStage=0;
                     currentPoint=null;
                     System.out.println("deselecting point");
                 }else if(currentPoint.getCenterY()+50>event.getY()||currentPoint.getCenterY()-50<event.getY()){
-                    movingPoint=false;
+                    controlStage=0;
                     currentPoint=null;
                     System.out.println("deselecting point");
                 }
             }
         });
         background.setOnMouseClicked(event->{
-            if(creatingComponent) {
+            if(controlStage==2) {
                 final int componentId = numberOfComponents;
                 numberOfPoints=0;
                 Polygon poly = new Polygon();
@@ -109,19 +106,17 @@ public class MeshEditor extends Application{
                 poly.setTranslateX(event.getX());
                 poly.setTranslateY(event.getY());
                 poly.setOnMouseClicked(polyEvent->{
-                    selectedComponent = componentId;
-                    currentComponent = (Polygon) polygons.getChildren().get(componentId);
-                    numberOfPoints=components.get(selectedComponent).numberOfPoints;
+                    selectComponent(componentId);
+                    listView.getSelectionModel().select(componentId);
                 });
                 currentComponent=poly;
                 createNewMeshComponent(event.getX(),event.getY());
-            }else if(creatingPoint){
+            }else if(controlStage==1){
                 addMeshComponentPoint(selectedComponent,event.getX(),event.getY());
-
             }
         });
         view.setOnMouseDragged(event->{
-            if(movingPoint) {
+            if(controlStage==3) {
                 updateMeshComponentPoint(event.getX(),event.getY());
             }
         });
@@ -132,9 +127,7 @@ public class MeshEditor extends Application{
 
 
         listView.setOnMouseClicked(event->{
-            selectedComponent =  listView.getSelectionModel().getSelectedIndex();
-            currentComponent = (Polygon) polygons.getChildren().get(selectedComponent);
-            numberOfPoints=components.get(selectedComponent).numberOfPoints;
+            selectComponent(listView.getSelectionModel().getSelectedIndex());
         });
         ui.setLeft(listView);
 
@@ -163,9 +156,7 @@ public class MeshEditor extends Application{
             if(selectedComponent==componentId){
                 selectedPointId=pointId;
                 currentPoint=selectPoint;
-                creatingPoint=false;
-                creatingComponent=false;
-                movingPoint=true;
+                controlStage=3;
                 System.out.println("Moving point");
             }
         });
@@ -188,7 +179,11 @@ public class MeshEditor extends Application{
         currentComponent.setFill(Color.ORANGE);
     }
 
-
+    public void selectComponent(int index){
+        selectedComponent =  index;
+        currentComponent = (Polygon) polygons.getChildren().get(selectedComponent);
+        numberOfPoints=components.get(selectedComponent).numberOfPoints;
+    }
 
     public static void main(String[] args) {
         launch(args);
