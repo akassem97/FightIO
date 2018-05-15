@@ -5,6 +5,7 @@ public class Player1 extends BasePlayer{
     public boolean smashing=false;
     public int punching = 0;
     public int kicking = 0;
+    public int walking = 0;
     public Player1(){
         super(0);
     }
@@ -24,5 +25,15 @@ public class Player1 extends BasePlayer{
             smashing=true;
             setyVel(10);
         }
+    else {
+        	changeDisplay(3);
+        }
+        
+    }
+    
+    public void walk(){
+        walking = 15;
+        changeDisplay(5);
+        changeDisplay(6);
     }
 }

@@ -29,7 +29,7 @@ public class Game implements Runnable{
             System.out.println(player1.punching);
             player1.punching--;
             if(player1.punching==0){
-                player1.changeDisplay(0);
+                player1.changeDisplay(0);	
             }
         }
         physics();
@@ -50,16 +50,19 @@ public class Game implements Runnable{
             }
             else if(keyEvent.getCode() == KeyCode.LEFT){
                 player1.setxVel(-10);
+                player1.walk();
+                
             }
             else if(keyEvent.getCode() == KeyCode.DOWN){
 
-                    player1.smash();
+                player1.smash();
 
             }
             else if(keyEvent.getCode() == KeyCode.RIGHT){
                 player1.setxVel(10);
+                player1.walk();
             }
-            else if(keyEvent.getCode() == KeyCode.Z ){
+            else if(keyEvent.getCode() == KeyCode.Z){
                 player1.punch();
             }
             else if(keyEvent.getCode() == KeyCode.X){
@@ -71,26 +74,30 @@ public class Game implements Runnable{
             }
         });
         scene.setOnKeyReleased(keyEvent->{
-            if(keyEvent.getCode() == KeyCode.W){
-                //player1.setyVel(0);
+            if(keyEvent.getCode() == KeyCode.UP){
+                player1.setyVel(0);
+                player1.changeDisplay(0);
             }
-            else if(keyEvent.getCode() == KeyCode.A){
+            else if(keyEvent.getCode() == KeyCode.LEFT){
                 player1.setxVel(0);
+                player1.changeDisplay(0);
             }
-            else if(keyEvent.getCode() == KeyCode.S){
-                //player1.setyVel(0);
+            else if(keyEvent.getCode() == KeyCode.DOWN){
+                player1.setyVel(0);
+                player1.changeDisplay(0);
             }
-            else if(keyEvent.getCode() == KeyCode.D){
+            else if(keyEvent.getCode() == KeyCode.RIGHT){
                 player1.setxVel(0);
+                player1.changeDisplay(0);
             }
             else if(keyEvent.getCode() == KeyCode.Z){
-
+            	player1.changeDisplay(0);
             }
             else if(keyEvent.getCode() == KeyCode.X){
-
+            	player1.changeDisplay(0);
             }
             else if(keyEvent.getCode() == KeyCode.C){
-
+            	player1.changeDisplay(0);
             }
         });
         return scene;
